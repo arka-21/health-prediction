@@ -20,13 +20,19 @@ export async function savePrediction(
     }
 
     // Create input string for Groq
-    const input = `Symptoms: ${symptoms}
-${age ? `Age: ${age} years` : ""}
-${weight ? `Weight: ${weight} kg` : ""}
-${allergies ? `Allergies: ${allergies}` : ""}
-${duration ? `Duration: ${duration}` : ""}
+    const input = `
+    You are an expert LLM, your job is to predict the possible illness based on the given information.
+    If user inputs any inforamtion that is irrelevent to this, just answer based on your LLM knowledge.
+\n\n    
 
-Please provide a health prediction based on the above information.`
+    <Inputs>
+    Symptoms: ${symptoms}
+    ${age ? `Age: ${age} years` : ""}
+    ${weight ? `Weight: ${weight} kg` : ""}
+    ${allergies ? `Allergies: ${allergies}` : ""}
+    ${duration ? `Duration: ${duration}` : ""}
+    </Inputs>
+`
 
     // Get AI prediction
     const result = await askGroq(input)
