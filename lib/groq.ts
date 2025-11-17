@@ -23,7 +23,7 @@ export async function askGroq(input: string): Promise<string> {
           messages: [
             {
               role: "system",
-              content: "You are a medical risk analysis model. Based on symptoms, age, duration, give a simple prediction of possible illness and a confidence percentage. Return answer in clean plain text. Be concise and professional."
+              content: "You are a smart LLM."
             },
             {
               role: "user",
