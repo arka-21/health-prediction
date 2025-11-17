@@ -16,7 +16,7 @@ export async function savePrediction(
   try {
     const userId = await getCurrentUser()
     if (!userId) {
-      return { success: false, message: "You must be logged in to save predictions" }
+      return JSON.parse(JSON.stringify({ success: false, message: "You must be logged in to save predictions" }))
     }
 
     // Create input string for Groq
@@ -49,17 +49,17 @@ Please provide a health prediction based on the above information.`
     const insertResult = await predictionsCollection.insertOne(prediction)
 
     if (insertResult.insertedId) {
-      return {
+      return JSON.parse(JSON.stringify({
         success: true,
         message: "Prediction saved successfully",
         prediction: { ...prediction, _id: insertResult.insertedId.toString() },
-      }
+      }))
     }
 
-    return { success: false, message: "Failed to save prediction" }
+    return JSON.parse(JSON.stringify({ success: false, message: "Failed to save prediction" }))
   } catch (error) {
     console.error("Save prediction error:", error)
-    return { success: false, message: error instanceof Error ? error.message : "An error occurred" }
+    return JSON.parse(JSON.stringify({ success: false, message: error instanceof Error ? error.message : "An error occurred" }))
   }
 }
 
@@ -67,7 +67,7 @@ export async function getUserPredictions(): Promise<Prediction[]> {
   try {
     const userId = await getCurrentUser()
     if (!userId) {
-      return []
+      return JSON.parse(JSON.stringify([]))
     }
 
     const db = await getDb()
@@ -78,14 +78,14 @@ export async function getUserPredictions(): Promise<Prediction[]> {
       .sort({ createdAt: -1 })
       .toArray()
 
-    return predictions.map(pred => ({
+    return JSON.parse(JSON.stringify(predictions.map(pred => ({
       ...pred,
       _id: pred._id?.toString(),
       createdAt: pred.createdAt instanceof Date ? pred.createdAt : new Date(pred.createdAt),
-    })) as Prediction[]
+    })))) as Prediction[]
   } catch (error) {
     console.error("Get predictions error:", error)
-    return []
+    return JSON.parse(JSON.stringify([]))
   }
 }
 
@@ -93,7 +93,7 @@ export async function deletePrediction(predictionId: string): Promise<{ success:
   try {
     const userId = await getCurrentUser()
     if (!userId) {
-      return { success: false, message: "You must be logged in" }
+      return JSON.parse(JSON.stringify({ success: false, message: "You must be logged in" }))
     }
 
     const db = await getDb()
@@ -104,22 +104,22 @@ export async function deletePrediction(predictionId: string): Promise<{ success:
     try {
       objectId = new ObjectId(predictionId)
     } catch {
-      return { success: false, message: "Invalid prediction ID" }
+      return JSON.parse(JSON.stringify({ success: false, message: "Invalid prediction ID" }))
     }
 
     const result = await predictionsCollection.deleteOne({
-      _id: objectId,
+      _id: objectId as any,
       userId,
     })
 
     if (result.deletedCount > 0) {
-      return { success: true, message: "Prediction deleted successfully" }
+      return JSON.parse(JSON.stringify({ success: true, message: "Prediction deleted successfully" }))
     }
 
-    return { success: false, message: "Prediction not found" }
+    return JSON.parse(JSON.stringify({ success: false, message: "Prediction not found" }))
   } catch (error) {
     console.error("Delete prediction error:", error)
-    return { success: false, message: "An error occurred" }
+    return JSON.parse(JSON.stringify({ success: false, message: "An error occurred" }))
   }
 }
 

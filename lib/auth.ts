@@ -13,7 +13,7 @@ export async function registerUser(email: string, password: string): Promise<{ s
     // Check if user already exists
     const existingUser = await usersCollection.findOne({ email })
     if (existingUser) {
-      return { success: false, message: "User already exists" }
+      return JSON.parse(JSON.stringify({ success: false, message: "User already exists" }))
     }
 
     // Hash password
@@ -36,13 +36,13 @@ export async function registerUser(email: string, password: string): Promise<{ s
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
 
-      return { success: true, message: "Registration successful" }
+      return JSON.parse(JSON.stringify({ success: true, message: "Registration successful" }))
     }
 
-    return { success: false, message: "Failed to create user" }
+    return JSON.parse(JSON.stringify({ success: false, message: "Failed to create user" }))
   } catch (error) {
     console.error("Registration error:", error)
-    return { success: false, message: "An error occurred during registration" }
+    return JSON.parse(JSON.stringify({ success: false, message: "An error occurred during registration" }))
   }
 }
 
@@ -53,12 +53,12 @@ export async function loginUser(email: string, password: string): Promise<{ succ
 
     const user = await usersCollection.findOne({ email })
     if (!user) {
-      return { success: false, message: "Invalid email or password" }
+      return JSON.parse(JSON.stringify({ success: false, message: "Invalid email or password" }))
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password)
     if (!isValidPassword) {
-      return { success: false, message: "Invalid email or password" }
+      return JSON.parse(JSON.stringify({ success: false, message: "Invalid email or password" }))
     }
 
     // Set session cookie
@@ -70,10 +70,10 @@ export async function loginUser(email: string, password: string): Promise<{ succ
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })
 
-    return { success: true, message: "Login successful" }
+    return JSON.parse(JSON.stringify({ success: true, message: "Login successful" }))
   } catch (error) {
     console.error("Login error:", error)
-    return { success: false, message: "An error occurred during login" }
+    return JSON.parse(JSON.stringify({ success: false, message: "An error occurred during login" }))
   }
 }
 
